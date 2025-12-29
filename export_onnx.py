@@ -5,7 +5,7 @@ NUM_CLASSES = 5 # change
 MODEL_PATH = "model.pth"
 ONNX_PATH = "model.onnx"
 
-model = models.resnet50(pretrained=True)
+model = models.resnet18(pretrained=True)
 model.fc = torch.nn.Linear(model.fc.in_features, NUM_CLASSES)
 model.eval()
 
