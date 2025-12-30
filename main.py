@@ -44,25 +44,21 @@ preprocess = transforms.Compose([
 def health():
     return {"status": "ok"}
 
+
 @app.post("/predict")
 def predict(file: UploadFile = File(...)):
-   image_bytes = file.file.read()
-   image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    image_bytes = file.file.read()
+    image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
-   tensor = preprocess(image).unsqueeze(0).numpy()
+    tensor = preprocess(image).unsqueeze(0).numpy()
 
-   outputs = session.run(None, {"input": tensor})[0][0]
-   probs = np.exp(outputs) / np.sum(np.exp(outputs))
+    outputs = session.run(None, {"input": tensor})[0][0]
+    probs = np.exp(outputs) / np.sum(np.exp(outputs))
 
-   topk = min(5, NUM_CLASSES)
-   indices = probs.argsort()[-topk:][::-1]
+    best_idx = int(np.argmax(probs))
+    best_confidence = float(probs[best_idx])
 
-   results = [
-      {
-         "label": class_names[str(i)],
-         "confidence": round(float(probs[i]), 4)
-      }
-      for i in indices
-   ]
-
-   return {"predictions": results}
+    return {
+        "label": class_names[str(best_idx)],
+        "confidence": round(best_confidence, 4)
+    }
