@@ -56,4 +56,4 @@ def predict(file: UploadFile = File(...)):
       for i in indices
    ]
 
-    return {"predictions": results}
+   return {"predictions": results}
