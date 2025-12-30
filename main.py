@@ -5,8 +5,17 @@ from PIL import Image
 from fastapi import FastAPI, File, UploadFile
 import onnxruntime as ort
 from torchvision import transforms
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI(title="Custom ResNet50 API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # change to specific domains later
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Load labels
 with open("class_names.json") as f:
